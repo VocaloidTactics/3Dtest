@@ -6,7 +6,7 @@ using Cinemachine;
 public class camRotate: MonoBehaviour
 {
     // 灵敏度
-    public float mouseSensitivity = 2f;
+    public float mouseSensitivity = 10f;
     public float scrollSensitivity = 50f;
     
     // 最大和最小的垂直旋转角度
@@ -16,15 +16,19 @@ public class camRotate: MonoBehaviour
     //外部对象
     public GameObject go;
     
-    // 初始FOV
-    private float currentFov = 60f;
+    // FOV
+    private float targetFov = 60f;
+    private float currentFov;
     
     // 最大和最小的FOV
     private float minFov = 40f;
     private float maxFov = 80f;
     
+    // Rotation
+    private float targetRotation;
+    private float currentRotation = 45f;
+    
     // 初始视角
-    private float xRotation = 45f;
     private Quaternion initialRotation;
     
     // 相机对象
@@ -36,9 +40,12 @@ public class camRotate: MonoBehaviour
     // 鼠标右键按下时的时间
     private float releaseTime = -1;
     
-    // 1秒后重置视角
+    // 重置视角延迟
     private float resetDelay = 1f; 
-
+    
+    // 平滑时间
+    private float smoothTime = 0.1f;
+    
 
     void Start()
     {
@@ -63,7 +70,6 @@ public class camRotate: MonoBehaviour
         if (isRightMouseButtonDown)
         {
             float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-            // transform.Rotate(Vector3.up * mouseX);
             
             // 绕go的y轴进行水平旋转
             transform.RotateAround(go.transform.position, Vector3.up, mouseX);
@@ -80,19 +86,27 @@ public class camRotate: MonoBehaviour
     // 鼠标滚轮操作
     private void wheelMethod()
     {
-        
         float scrollDelta = Input.GetAxis("Mouse ScrollWheel");
         if (scrollDelta != 0f)
         {
-            //调整fov
-            currentFov += scrollDelta * scrollSensitivity;
-            currentFov = Mathf.Clamp(currentFov, minFov, maxFov);
+            /* 调整fov */
+            /***************/
+            targetFov += scrollDelta * scrollSensitivity;
+            targetFov = Mathf.Clamp(targetFov, minFov, maxFov);
+            // 使用Lerp进行平滑插值
+            currentFov = Mathf.Lerp(currentFov, targetFov, smoothTime);
             vcam.m_Lens.FieldOfView = currentFov;
+            /***************/
             
+            /* 调整垂直角度 */
             // 根据鼠标滚轮的滚动方向和角度,调整相机的垂直角度
             float verticalRotationDelta = scrollDelta * scrollSensitivity;
-            xRotation = Mathf.Clamp(xRotation + verticalRotationDelta, minVerticalRotation, maxVerticalRotation);
-            transform.localRotation = Quaternion.Euler(xRotation, transform.localRotation.eulerAngles.y, 0f);
+            targetRotation = Mathf.Clamp(targetRotation + verticalRotationDelta, minVerticalRotation, maxVerticalRotation);
+            // 使用Lerp进行平滑插值
+           
+            currentRotation = Mathf.Lerp(currentRotation, targetRotation, smoothTime);
+            transform.localRotation = Quaternion.Euler(currentRotation, transform.rotation.eulerAngles.y,transform.rotation.eulerAngles.z);
+            /***************/
         }
     }
     
