@@ -10,28 +10,28 @@ public class RoleMove : MonoBehaviour
    
     void Update()
     {
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.S))
         {
             Debug.Log("检测到你按下了W键，我开始移动啦");
             this.transform.Translate( 0, 0, 1 * myspeed,Space.Self);
             Debug.Log("开始移动啦");
         }
         //--往后移动
-        if (Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.W))
         {
             Debug.Log("检测到你按下了S键，我开始移动啦");
             this.transform.Translate(0, 0, -1 * myspeed, Space.Self);
             Debug.Log("开始移动啦");
         }
         //--往左移动
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.D))
         {
             Debug.Log("检测到你按下了A键，我开始移动啦");
             this.transform.Translate(-1 * myspeed, 0, 0, Space.Self);
             Debug.Log("开始移动啦");
         }
         //--往YOU移动
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.A))
         {
             Debug.Log("检测到你按下了D键，我开始移动啦");
             this.transform.Translate(1 * myspeed, 0, 0, Space.Self);
